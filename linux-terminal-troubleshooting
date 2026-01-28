@@ -1,0 +1,280 @@
+---
+
+# Ubuntu GNOME Terminal Troubleshooting (VirtualBox)
+
+## Overview
+
+This repository documents a real troubleshooting scenario encountered after reinstalling **Ubuntu Desktop in VirtualBox**, where the **GNOME Terminal failed to open**, even though the operating system itself was working correctly.
+
+The purpose of this repository is to demonstrate:
+
+* Linux troubleshooting methodology
+* Use of TTY for recovery
+* Understanding of user permissions and sudo
+* Diagnosing application-level issues
+* Real system administration practices
+
+This is a **learning-focused lab**, not a perfect setup.
+
+---
+
+## Environment
+
+* Host OS: Windows
+* Virtualization: VirtualBox
+* Guest OS: Ubuntu Desktop (22.04 LTS)
+* User account: `sysadmin`
+
+---
+
+## Problem Summary
+
+After reinstalling Ubuntu:
+
+* System booted normally
+* GUI login worked
+* GNOME Desktop loaded successfully
+* **GNOME Terminal did not open**
+
+Observed behavior:
+
+* Clicking Terminal icon → loading spinner → disappears
+* `Ctrl + Alt + T` did nothing
+* `Alt + F2 → gnome-terminal` failed
+* Restarting the system did not resolve the issue
+
+---
+
+## Initial Diagnosis
+
+Key observations:
+
+* System was responsive
+* GUI was functional
+* Keyboard shortcuts worked
+* Only **GNOME Terminal** was failing
+
+This indicated:
+
+> The OS, kernel, and desktop session were healthy
+> The issue was isolated to **gnome-terminal or user configuration**
+
+---
+
+## Troubleshooting Approach
+
+Instead of reinstalling the OS again, a structured troubleshooting approach was used:
+
+1. Bypass the GUI
+2. Verify system health via TTY
+3. Check user privileges
+4. Reinstall affected packages
+5. Validate system using an alternative terminal
+
+This mirrors **real server and cloud troubleshooting workflows**.
+
+---
+
+## Issues Encountered
+
+### 1️⃣ Terminal Not Opening
+
+GNOME Terminal failed silently without error messages.
+
+### 2️⃣ No sudo Access
+
+Running administrative commands resulted in:
+
+```
+sysadmin is not in the sudoers file
+```
+
+This confirmed the user was created **without sudo privileges**, which blocked normal package management.
+
+---
+
+## Resolution Strategy
+
+* Used TTY for recovery access
+* Switched to root user for administrative tasks
+* Reinstalled GNOME Terminal components
+* Reset GNOME user configuration
+* Installed an alternative terminal (xterm) to validate system health
+
+---
+
+## Final Outcome
+
+* Ubuntu OS is healthy
+* Networking works
+* Package manager works
+* GUI session works
+* **GNOME Terminal issue is isolated and non-critical**
+
+xterm working confirmed:
+
+* Shell is functional
+* User environment is usable
+* No OS reinstall required
+
+---
+
+## Key Learnings
+
+* GUI failure ≠ OS failure
+* TTY access is critical for Linux recovery
+* Always isolate the problem before reinstalling
+* Root access is essential for system troubleshooting
+* Alternative tools help validate assumptions
+
+---
+
+## Real-World Relevance
+
+* Servers often run **without GUI**
+* TTY is equivalent to:
+
+  * Physical console
+  * Cloud serial console
+* This scenario closely resembles:
+
+  * Cloud VM recovery
+  * Sysadmin troubleshooting
+  * Support engineer workflows
+
+---
+
+## What Was Intentionally Avoided
+
+* No OS reinstall
+* No random permission changes
+* No unsafe config deletion
+* No blind fixes
+
+This keeps the system **clean, traceable, and auditable**.
+
+---
+
+## Screenshots
+
+⚠️ Some screenshots were lost due to clipboard reset during reinstall.
+This repository focuses on **process and reasoning**, not visuals.
+
+---
+
+## Next Steps
+
+* Assign proper sudo privileges to user
+* Configure SSH access
+* Document networking configuration
+* Transition system toward server-style usage
+* Replicate setup on a cloud VM
+
+---
+
+# 🔽 Commands Used (Step-by-Step)
+
+This section lists **all commands executed**, in the order they were used.
+
+---
+
+### Switch to TTY
+
+```bash
+Ctrl + Alt + F3
+```
+
+---
+
+### Login as user
+
+```text
+Username: sysadmin
+Password: ********
+```
+
+---
+
+### Attempt sudo (failed)
+
+```bash
+sudo apt update
+```
+
+Error:
+
+```
+sysadmin is not in the sudoers file
+```
+
+---
+
+### Switch to root user
+
+```bash
+su -
+```
+
+---
+
+### Test GNOME Terminal
+
+```bash
+gnome-terminal
+```
+
+Result:
+
+* Terminal exited immediately
+
+---
+
+### Reinstall GNOME Terminal packages
+
+```bash
+apt install --reinstall gnome-terminal gnome-terminal-data libvte-2.91-0 -y
+```
+
+---
+
+### Exit root
+
+```bash
+exit
+```
+
+---
+
+### Reset GNOME configuration
+
+```bash
+dconf reset -f /org/gnome/terminal/
+dconf reset -f /org/gnome/
+```
+
+---
+
+### Install alternative terminal
+
+```bash
+sudo apt install xterm -y
+```
+
+---
+
+### Launch xterm from GUI
+
+```bash
+Alt + F2
+xterm
+```
+
+---
+
+### Result
+
+* xterm opened successfully
+* Commands executed normally
+* System confirmed healthy
+
+---
